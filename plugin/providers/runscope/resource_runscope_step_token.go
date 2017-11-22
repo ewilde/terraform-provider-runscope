@@ -87,21 +87,17 @@ func resourceStepTokenRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceStepTokenUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.Partial(false)
-	stepFromResource, bucketId, testId, err := createStepFromResourceData(d)
+	client := meta.(*runscope.Client)
+	stepFromResource, bucketId, testId, _, err := createStepTokenFromResourceData(d, client.APIURL)
 	if err != nil {
-		return fmt.Errorf("Error updating step: %s", err)
+		return fmt.Errorf("Error updating step token: %s", err)
 	}
 
-	if d.HasChange("url") ||
-		d.HasChange("variables") ||
-		d.HasChange("assertions") ||
-		d.HasChange("headers") ||
-		d.HasChange("body") {
-		client := meta.(*runscope.Client)
+	if d.HasChange("token") {
 		_, err = client.UpdateTestStep(stepFromResource, bucketId, testId)
 
 		if err != nil {
-			return fmt.Errorf("Error updating step: %s", err)
+			return fmt.Errorf("Error updating step token: %s", err)
 		}
 	}
 
@@ -111,14 +107,14 @@ func resourceStepTokenUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceStepTokenDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*runscope.Client)
 
-	stepFromResource, bucketId, testId, err := createStepFromResourceData(d)
+	stepFromResource, bucketId, testId, _, err := createStepTokenFromResourceData(d, client.APIURL)
 	if err != nil {
-		return fmt.Errorf("Failed to read step from resource data: %s", err)
+		return fmt.Errorf("Failed to read step token from resource data: %s", err)
 	}
 
 	err = client.DeleteTestStep(stepFromResource, bucketId, testId)
 	if err != nil {
-		return fmt.Errorf("Error deleting step: %s", err)
+		return fmt.Errorf("Error deleting step token: %s", err)
 	}
 
 	return nil
