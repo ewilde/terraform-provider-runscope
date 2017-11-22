@@ -19,9 +19,9 @@ func TestAccStepToken_basic(t *testing.T) {
 			{
 				Config: fmt.Sprintf(testRunscopeStepTokenConfigA, teamId),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckStepTokenExists("runscope_step.token_step"),
+					testAccCheckStepTokenExists("runscope_step_token.token_step"),
 					resource.TestCheckResourceAttr(
-						"runscope_step.main_page", "url", "http://example.com")),
+						"runscope_step_token.token_step", "token_name", "token")),
 			},
 		},
 	})
@@ -31,7 +31,7 @@ func testAccCheckStepTokenDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*runscope.Client)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "runscope_step" {
+		if rs.Type != "runscope_step_token" {
 			continue
 		}
 
@@ -41,7 +41,7 @@ func testAccCheckStepTokenDestroy(s *terraform.State) error {
 		err = client.DeleteTestStep(&runscope.TestStep{ID: rs.Primary.ID}, bucketId, testId)
 
 		if err == nil {
-			return fmt.Errorf("Record %s still exists", rs.Primary.ID)
+			return fmt.Errorf("Record step token %s still exists", rs.Primary.ID)
 		}
 	}
 
@@ -90,7 +90,7 @@ resource "runscope_step_token" "token_step" {
   bucket_id      = "${runscope_bucket.bucket.id}"
   test_id        = "${runscope_test.test.id}"
   environment_id = "${runscope_environment.environment.id}"
-  token          = "token"
+  token_name     = "token"
 }
 
 resource "runscope_environment" "environment" {
@@ -104,8 +104,6 @@ resource "runscope_environment" "environment" {
   }
 
 	regions = ["us1", "eu1"]
-
-	retry_on_failure = true
 }
 
 resource "runscope_test" "test" {
