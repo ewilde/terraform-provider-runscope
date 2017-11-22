@@ -1,6 +1,7 @@
 package runscope
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/ewilde/go-runscope"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -42,13 +43,28 @@ func resourceRunscopeStepToken() *schema.Resource {
 func resourceStepTokenCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*runscope.Client)
 
-	step, bucketId, testId, _, err := createStepTokenFromResourceData(d, client.APIURL)
+	step, bucketId, testId, environmentId, err := createStepTokenFromResourceData(d, client)
 	if err != nil {
 		return err
 	}
 
 	log.Printf("[DEBUG] step token create: %#v", step)
 
+	environment, err := client.ReadSharedEnvironment(&runscope.Environment{ID: environmentId}, &runscope.Bucket{Key: bucketId})
+	if err != nil {
+		return err
+	}
+
+	tokenName := d.Get("token_name").(string)
+
+	environment.InitialVariables[tokenName] = fmt.Sprintf("{{%s}}", tokenName)
+
+	bytes, err := json.Marshal(environment)
+	if err != nil {
+		return err
+	}
+
+	step.Body = string(bytes)
 	createdStep, err := client.CreateTestStep(step, bucketId, testId)
 	if err != nil {
 		return fmt.Errorf("Failed to create step token: %s", err)
@@ -63,7 +79,7 @@ func resourceStepTokenCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceStepTokenRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*runscope.Client)
 
-	stepFromResource, bucketId, testId, environmentId, err := createStepTokenFromResourceData(d, client.APIURL)
+	stepFromResource, bucketId, testId, environmentId, err := createStepTokenFromResourceData(d, client)
 	if err != nil {
 		return fmt.Errorf("Failed to read step token from resource data: %s", err)
 	}
@@ -88,7 +104,7 @@ func resourceStepTokenRead(d *schema.ResourceData, meta interface{}) error {
 func resourceStepTokenUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.Partial(false)
 	client := meta.(*runscope.Client)
-	stepFromResource, bucketId, testId, _, err := createStepTokenFromResourceData(d, client.APIURL)
+	stepFromResource, bucketId, testId, _, err := createStepTokenFromResourceData(d, client)
 	if err != nil {
 		return fmt.Errorf("Error updating step token: %s", err)
 	}
@@ -107,7 +123,7 @@ func resourceStepTokenUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceStepTokenDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*runscope.Client)
 
-	stepFromResource, bucketId, testId, _, err := createStepTokenFromResourceData(d, client.APIURL)
+	stepFromResource, bucketId, testId, _, err := createStepTokenFromResourceData(d, client)
 	if err != nil {
 		return fmt.Errorf("Failed to read step token from resource data: %s", err)
 	}
@@ -120,7 +136,7 @@ func resourceStepTokenDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func createStepTokenFromResourceData(d *schema.ResourceData, apiUrl string) (*runscope.TestStep, string, string, string, error) {
+func createStepTokenFromResourceData(d *schema.ResourceData, client *runscope.Client) (*runscope.TestStep, string, string, string, error) {
 
 	step := runscope.NewTestStep()
 	bucketId := d.Get("bucket_id").(string)
@@ -129,8 +145,19 @@ func createStepTokenFromResourceData(d *schema.ResourceData, apiUrl string) (*ru
 	step.ID = d.Id()
 	step.StepType = "request"
 	step.Body = "environment json goes here"
-	step.Method = "POST"
-	step.URL = fmt.Sprintf("%s/buckets/%s/environments/%s", apiUrl, bucketId, environmentId)
+	step.Method = "PUT"
+	step.URL = fmt.Sprintf("%s/buckets/%s/environments/%s", client.APIURL, bucketId, environmentId)
+	step.Headers = map[string][]string{
+		"Content-Type":  {"application/json"},
+		"Authorization": {fmt.Sprintf("Bearer %s", client.AccessToken)},
+	}
+	step.Assertions = []*runscope.Assertion{
+		{
+			Comparison: "equal_number",
+			Value:      200,
+			Source:     "response_status",
+		},
+	}
 
 	return step, bucketId, testId, environmentId, nil
 }

@@ -1,6 +1,7 @@
 package runscope
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/ewilde/go-runscope"
 	"github.com/hashicorp/terraform/helper/resource"
@@ -20,6 +21,7 @@ func TestAccStepToken_basic(t *testing.T) {
 				Config: fmt.Sprintf(testRunscopeStepTokenConfigA, teamId),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckStepTokenExists("runscope_step_token.token_step"),
+					testAccCheckStepTokenBodyContainsEnvironmentWithTokenPlaceHolder("runscope_step_token.token_step", "token"),
 					resource.TestCheckResourceAttr(
 						"runscope_step_token.token_step", "token_name", "token")),
 			},
@@ -48,6 +50,54 @@ func testAccCheckStepTokenDestroy(s *terraform.State) error {
 	return nil
 }
 
+func testAccCheckStepTokenBodyContainsEnvironmentWithTokenPlaceHolder(n string, tokenName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+
+		if !ok {
+			return fmt.Errorf("Not found: %s", n)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No Record ID is set")
+		}
+
+		client := testAccProvider.Meta().(*runscope.Client)
+
+		var foundRecord *runscope.TestStep
+		var err error
+
+		step := new(runscope.TestStep)
+		step.ID = rs.Primary.ID
+		bucketId := rs.Primary.Attributes["bucket_id"]
+		testId := rs.Primary.Attributes["test_id"]
+
+		foundRecord, err = client.ReadTestStep(step, bucketId, testId)
+		environmentBody := make(map[string]interface{})
+		json.Unmarshal([]byte(foundRecord.Body), &environmentBody)
+
+		if err != nil {
+			return err
+		}
+
+		initalVariablesMap := environmentBody["initial_variables"].(map[string]interface{})
+
+		if initalVariablesMap["var1"].(string) != "true" {
+			return fmt.Errorf("var1 in initial variables should be %v but is %v", "true", initalVariablesMap["var1"])
+		}
+
+		if initalVariablesMap["var2"].(string) != "value2" {
+			return fmt.Errorf("var1 in initial variables should be %v but is %v", "value2", initalVariablesMap["var2"])
+		}
+
+		if initalVariablesMap[tokenName].(string) != fmt.Sprintf("{{%s}}", tokenName) {
+			return fmt.Errorf("%v in initial variables should be %v but is %v", tokenName, fmt.Sprintf("{{%s}}", tokenName), initalVariablesMap["var2"])
+		}
+
+		return nil
+
+	}
+}
 
 func testAccCheckStepTokenExists(n string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
