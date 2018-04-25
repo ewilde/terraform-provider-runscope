@@ -51,9 +51,9 @@ func TestMain(m *testing.M) {
 
 	config := Config{
 		AccessToken: os.Getenv("RUNSCOPE_ACCESS_TOKEN"),
-		ApiUrl:      "https://api.runscope.com",
+		APIURL:      "https://api.runscope.com",
 	}
-	client, err := config.Client()
+	client, err := config.client()
 
 	if err != nil {
 		log.Fatalf("Could not create client: %v", err)

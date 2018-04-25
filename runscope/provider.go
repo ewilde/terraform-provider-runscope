@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+// Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -60,7 +61,7 @@ func envDefaultFunc(k string) schema.SchemaDefaultFunc {
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
 		AccessToken: d.Get("access_token").(string),
-		ApiUrl:      d.Get("api_url").(string),
+		APIURL:      d.Get("api_url").(string),
 	}
-	return config.Client()
+	return config.client()
 }

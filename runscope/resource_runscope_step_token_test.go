@@ -11,14 +11,14 @@ import (
 )
 
 func TestAccStepToken_basic(t *testing.T) {
-	teamId := os.Getenv("RUNSCOPE_TEAM_ID")
+	teamID := os.Getenv("RUNSCOPE_TEAM_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckStepTokenDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(testRunscopeStepTokenConfigA, teamId),
+				Config: fmt.Sprintf(testRunscopeStepTokenConfigA, teamID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckStepTokenExists("runscope_step_token.token_step"),
 					testAccCheckStepTokenBodyContainsEnvironmentWithTokenPlaceHolder("runscope_step_token.token_step", "token"),
@@ -38,9 +38,9 @@ func testAccCheckStepTokenDestroy(s *terraform.State) error {
 		}
 
 		var err error
-		bucketId := rs.Primary.Attributes["bucket_id"]
-		testId := rs.Primary.Attributes["test_id"]
-		err = client.DeleteTestStep(&runscope.TestStep{ID: rs.Primary.ID}, bucketId, testId)
+		bucketID := rs.Primary.Attributes["bucket_id"]
+		testID := rs.Primary.Attributes["test_id"]
+		err = client.DeleteTestStep(&runscope.TestStep{ID: rs.Primary.ID}, bucketID, testID)
 
 		if err == nil {
 			return fmt.Errorf("Record step token %s still exists", rs.Primary.ID)
@@ -69,10 +69,10 @@ func testAccCheckStepTokenBodyContainsEnvironmentWithTokenPlaceHolder(n string, 
 
 		step := new(runscope.TestStep)
 		step.ID = rs.Primary.ID
-		bucketId := rs.Primary.Attributes["bucket_id"]
-		testId := rs.Primary.Attributes["test_id"]
+		bucketID := rs.Primary.Attributes["bucket_id"]
+		testID := rs.Primary.Attributes["test_id"]
 
-		foundRecord, err = client.ReadTestStep(step, bucketId, testId)
+		foundRecord, err = client.ReadTestStep(step, bucketID, testID)
 		environmentBody := make(map[string]interface{})
 		json.Unmarshal([]byte(foundRecord.Body), &environmentBody)
 
@@ -118,10 +118,10 @@ func testAccCheckStepTokenExists(n string) resource.TestCheckFunc {
 
 		step := new(runscope.TestStep)
 		step.ID = rs.Primary.ID
-		bucketId := rs.Primary.Attributes["bucket_id"]
-		testId := rs.Primary.Attributes["test_id"]
+		bucketID := rs.Primary.Attributes["bucket_id"]
+		testID := rs.Primary.Attributes["test_id"]
 
-		foundRecord, err = client.ReadTestStep(step, bucketId, testId)
+		foundRecord, err = client.ReadTestStep(step, bucketID, testID)
 
 		if err != nil {
 			return err

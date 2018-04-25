@@ -11,7 +11,7 @@ import (
 
 func TestAccBucket_basic(t *testing.T) {
 	var bucketResponse runscope.Bucket
-	teamId := os.Getenv("RUNSCOPE_TEAM_ID")
+	teamID := os.Getenv("RUNSCOPE_TEAM_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -19,7 +19,7 @@ func TestAccBucket_basic(t *testing.T) {
 		CheckDestroy: testAccCheckBucketDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(testRunscopeBucketConfigA, teamId),
+				Config: fmt.Sprintf(testRunscopeBucketConfigA, teamID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckBucketExists("runscope_bucket.bucket", &bucketResponse),
 					resource.TestCheckResourceAttr(

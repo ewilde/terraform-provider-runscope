@@ -1,6 +1,6 @@
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 
-default: build test testacc
+default: lint build test testacc
 
 test: fmtcheck
 	go test -v . ./runscope
@@ -45,4 +45,13 @@ vet:
 		exit 1; \
 	fi
 
-.PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile
+lint:
+	@echo "go lint ."
+	@golint $$(go list ./... | grep -v vendor/) ; if [ $$? -eq 1 ]; then \
+		echo ""; \
+		echo "Lint found errors in the source code. Please check the reported errors"; \
+		echo "and fix them if necessary before submitting the code for review."; \
+		exit 1; \
+	fi
+
+.PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile lint

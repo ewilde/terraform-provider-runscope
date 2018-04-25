@@ -10,14 +10,14 @@ import (
 )
 
 func TestAccEnvironment_basic(t *testing.T) {
-	teamId := os.Getenv("RUNSCOPE_TEAM_ID")
+	teamID := os.Getenv("RUNSCOPE_TEAM_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckEnvironmentDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(testRunscopeEnvrionmentConfigA, teamId, teamId),
+				Config: fmt.Sprintf(testRunscopeEnvrionmentConfigA, teamID, teamID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckEnvironmentExists("runscope_environment.environment"),
 					resource.TestCheckResourceAttr(
@@ -36,14 +36,14 @@ func testAccCheckEnvironmentDestroy(s *terraform.State) error {
 		}
 
 		var err error
-		bucketId := rs.Primary.Attributes["bucket_id"]
-		testId := rs.Primary.Attributes["test_id"]
-		if testId != "" {
+		bucketID := rs.Primary.Attributes["bucket_id"]
+		testID := rs.Primary.Attributes["test_id"]
+		if testID != "" {
 			err = client.DeleteEnvironment(&runscope.Environment{ID: rs.Primary.ID},
-				&runscope.Bucket{Key: bucketId})
+				&runscope.Bucket{Key: bucketID})
 		} else {
 			err = client.DeleteEnvironment(&runscope.Environment{ID: rs.Primary.ID},
-				&runscope.Bucket{Key: bucketId})
+				&runscope.Bucket{Key: bucketID})
 		}
 
 		if err == nil {
@@ -73,16 +73,16 @@ func testAccCheckEnvironmentExists(n string) resource.TestCheckFunc {
 
 		environment := new(runscope.Environment)
 		environment.ID = rs.Primary.ID
-		bucketId := rs.Primary.Attributes["bucket_id"]
-		testId := rs.Primary.Attributes["test_id"]
-		if testId != "" {
+		bucketID := rs.Primary.Attributes["bucket_id"]
+		testID := rs.Primary.Attributes["test_id"]
+		if testID != "" {
 			foundRecord, err = client.ReadTestEnvironment(environment,
 				&runscope.Test{
-					ID:     testId,
-					Bucket: &runscope.Bucket{Key: bucketId}})
+					ID:     testID,
+					Bucket: &runscope.Bucket{Key: bucketID}})
 		} else {
 			foundRecord, err = client.ReadSharedEnvironment(environment,
-				&runscope.Bucket{Key: bucketId})
+				&runscope.Bucket{Key: bucketID})
 		}
 
 		if err != nil {

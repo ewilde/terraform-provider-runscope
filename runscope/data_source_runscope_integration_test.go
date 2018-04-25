@@ -11,14 +11,14 @@ import (
 
 func TestAccDataSourceRunscopeIntegration_Basic(t *testing.T) {
 
-	teamId := os.Getenv("RUNSCOPE_TEAM_ID")
+	teamID := os.Getenv("RUNSCOPE_TEAM_ID")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(testAccDataSourceRunscopeIntegrationConfig, teamId),
+				Config: fmt.Sprintf(testAccDataSourceRunscopeIntegrationConfig, teamID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccDataSourceRunscopeIntegration("data.runscope_integration.by_type"),
 				),
@@ -57,7 +57,7 @@ data "runscope_integration" "by_type" {
 
 func TestAccDataSourceRunscopeIntegration_Filter(t *testing.T) {
 
-	teamId := os.Getenv("RUNSCOPE_TEAM_ID")
+	teamIS := os.Getenv("RUNSCOPE_TEAM_ID")
 	var integrationDesc = os.Getenv("RUNSCOPE_INTEGRATION_DESC")
 	if integrationDesc == "" {
 		t.Fatal("RUNSCOPE_INTEGRATION_DESC must be set for this acceptance tests")
@@ -68,7 +68,7 @@ func TestAccDataSourceRunscopeIntegration_Filter(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(testAccDataSourceRunscopeIntegrationFilterConfig, teamId, integrationDesc),
+				Config: fmt.Sprintf(testAccDataSourceRunscopeIntegrationFilterConfig, teamIS, integrationDesc),
 				Check: resource.ComposeTestCheckFunc(
 					testAccDataSourceRunscopeIntegrationFilter("data.runscope_integration.by_type"),
 				),

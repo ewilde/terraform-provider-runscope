@@ -10,14 +10,14 @@ import (
 )
 
 func TestAccStep_basic(t *testing.T) {
-	teamId := os.Getenv("RUNSCOPE_TEAM_ID")
+	teamID := os.Getenv("RUNSCOPE_TEAM_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckStepDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(testRunscopeStepConfigA, teamId),
+				Config: fmt.Sprintf(testRunscopeStepConfigA, teamID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckStepMainPageExists("runscope_step.main_page"),
 					resource.TestCheckResourceAttr(
@@ -29,14 +29,14 @@ func TestAccStep_basic(t *testing.T) {
 }
 
 func TestAccStep_multiple_steps(t *testing.T) {
-	teamId := os.Getenv("RUNSCOPE_TEAM_ID")
+	teamID := os.Getenv("RUNSCOPE_TEAM_ID")
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckStepDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(testRunscopeStepConfigMultipleSteps, teamId),
+				Config: fmt.Sprintf(testRunscopeStepConfigMultipleSteps, teamID),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckStepExists("runscope_step.step_a"),
 					resource.TestCheckResourceAttr(
@@ -57,9 +57,9 @@ func testAccCheckStepDestroy(s *terraform.State) error {
 		}
 
 		var err error
-		bucketId := rs.Primary.Attributes["bucket_id"]
-		testId := rs.Primary.Attributes["test_id"]
-		err = client.DeleteTestStep(&runscope.TestStep{ID: rs.Primary.ID}, bucketId, testId)
+		bucketID := rs.Primary.Attributes["bucket_id"]
+		testID := rs.Primary.Attributes["test_id"]
+		err = client.DeleteTestStep(&runscope.TestStep{ID: rs.Primary.ID}, bucketID, testID)
 
 		if err == nil {
 			return fmt.Errorf("Record %s still exists", rs.Primary.ID)
@@ -88,10 +88,10 @@ func testAccCheckStepMainPageExists(n string) resource.TestCheckFunc {
 
 		step := new(runscope.TestStep)
 		step.ID = rs.Primary.ID
-		bucketId := rs.Primary.Attributes["bucket_id"]
-		testId := rs.Primary.Attributes["test_id"]
+		bucketID := rs.Primary.Attributes["bucket_id"]
+		testID := rs.Primary.Attributes["test_id"]
 
-		foundRecord, err = client.ReadTestStep(step, bucketId, testId)
+		foundRecord, err = client.ReadTestStep(step, bucketID, testID)
 
 		if err != nil {
 			return err
@@ -178,10 +178,10 @@ func testAccCheckStepExists(n string) resource.TestCheckFunc {
 
 		step := new(runscope.TestStep)
 		step.ID = rs.Primary.ID
-		bucketId := rs.Primary.Attributes["bucket_id"]
-		testId := rs.Primary.Attributes["test_id"]
+		bucketID := rs.Primary.Attributes["bucket_id"]
+		testID := rs.Primary.Attributes["test_id"]
 
-		foundRecord, err = client.ReadTestStep(step, bucketId, testId)
+		foundRecord, err = client.ReadTestStep(step, bucketID, testID)
 
 		if err != nil {
 			return err

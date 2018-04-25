@@ -141,14 +141,14 @@ func resourceRunscopeStep() *schema.Resource {
 func resourceStepCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*runscope.Client)
 
-	step, bucketId, testId, err := createStepFromResourceData(d)
+	step, bucketID, testID, err := createStepFromResourceData(d)
 	if err != nil {
 		return err
 	}
 
 	log.Printf("[DEBUG] step create: %#v", step)
 
-	createdStep, err := client.CreateTestStep(step, bucketId, testId)
+	createdStep, err := client.CreateTestStep(step, bucketID, testID)
 	if err != nil {
 		return fmt.Errorf("Failed to create step: %s", err)
 	}
@@ -162,12 +162,12 @@ func resourceStepCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceStepRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*runscope.Client)
 
-	stepFromResource, bucketId, testId, err := createStepFromResourceData(d)
+	stepFromResource, bucketID, testID, err := createStepFromResourceData(d)
 	if err != nil {
 		return fmt.Errorf("Failed to read step from resource data: %s", err)
 	}
 
-	step, err := client.ReadTestStep(stepFromResource, bucketId, testId)
+	step, err := client.ReadTestStep(stepFromResource, bucketID, testID)
 	if err != nil {
 		if strings.Contains(err.Error(), "404") || strings.Contains(err.Error(), "403") {
 			d.SetId("")
@@ -177,8 +177,8 @@ func resourceStepRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Couldn't find step: %s", err)
 	}
 
-	d.Set("bucket_id", bucketId)
-	d.Set("test_id", testId)
+	d.Set("bucket_id", bucketID)
+	d.Set("test_id", testID)
 	d.Set("step_type", step.StepType)
 	d.Set("method", step.Method)
 	d.Set("url", step.URL)
@@ -203,7 +203,7 @@ func resourceStepRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceStepUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.Partial(false)
-	stepFromResource, bucketId, testId, err := createStepFromResourceData(d)
+	stepFromResource, bucketID, testID, err := createStepFromResourceData(d)
 	if err != nil {
 		return fmt.Errorf("Error updating step: %s", err)
 	}
@@ -214,7 +214,7 @@ func resourceStepUpdate(d *schema.ResourceData, meta interface{}) error {
 		d.HasChange("headers") ||
 		d.HasChange("body") {
 		client := meta.(*runscope.Client)
-		_, err = client.UpdateTestStep(stepFromResource, bucketId, testId)
+		_, err = client.UpdateTestStep(stepFromResource, bucketID, testID)
 
 		if err != nil {
 			return fmt.Errorf("Error updating step: %s", err)
@@ -227,12 +227,12 @@ func resourceStepUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceStepDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*runscope.Client)
 
-	stepFromResource, bucketId, testId, err := createStepFromResourceData(d)
+	stepFromResource, bucketID, testID, err := createStepFromResourceData(d)
 	if err != nil {
 		return fmt.Errorf("Failed to read step from resource data: %s", err)
 	}
 
-	err = client.DeleteTestStep(stepFromResource, bucketId, testId)
+	err = client.DeleteTestStep(stepFromResource, bucketID, testID)
 	if err != nil {
 		return fmt.Errorf("Error deleting step: %s", err)
 	}
@@ -243,8 +243,8 @@ func resourceStepDelete(d *schema.ResourceData, meta interface{}) error {
 func createStepFromResourceData(d *schema.ResourceData) (*runscope.TestStep, string, string, error) {
 
 	step := runscope.NewTestStep()
-	bucketId := d.Get("bucket_id").(string)
-	testId := d.Get("test_id").(string)
+	bucketID := d.Get("bucket_id").(string)
+	testID := d.Get("test_id").(string)
 	step.ID = d.Id()
 	step.StepType = d.Get("step_type").(string)
 	step.Body = d.Get("body").(string)
@@ -321,7 +321,7 @@ func createStepFromResourceData(d *schema.ResourceData) (*runscope.TestStep, str
 		step.BeforeScripts = expandStringList(attr.([]interface{}))
 	}
 
-	return step, bucketId, testId, nil
+	return step, bucketID, testID, nil
 }
 
 func readVariables(variables []*runscope.Variable) []map[string]interface{} {
