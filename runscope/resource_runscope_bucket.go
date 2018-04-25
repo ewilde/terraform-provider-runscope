@@ -62,7 +62,7 @@ func resourceBucketRead(d *schema.ResourceData, meta interface{}) error {
 
 	bucket, err := client.ReadBucket(key)
 	if err != nil {
-		if strings.Contains(err.Error(), "403") {
+		if strings.Contains(err.Error(), "404") || strings.Contains(err.Error(), "403") {
 			d.SetId("")
 			return nil
 		}
