@@ -2,10 +2,11 @@ package runscope
 
 import (
 	"fmt"
-	"github.com/ewilde/go-runscope"
-	"github.com/hashicorp/terraform/helper/schema"
 	"log"
 	"strings"
+
+	"github.com/ewilde/go-runscope"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceRunscopeTest() *schema.Resource {

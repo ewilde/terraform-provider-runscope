@@ -31,7 +31,7 @@ deps:
 clean:
 	rm -rf pkg/
 fmt:
-	gofmt -w $(GOFMT_FILES)
+	goimports -w $(GOFMT_FILES)
 
 fmtcheck:
 	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"

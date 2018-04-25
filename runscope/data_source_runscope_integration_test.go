@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"os"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"os"
 )
 
 func TestAccDataSourceRunscopeIntegration_Basic(t *testing.T) {

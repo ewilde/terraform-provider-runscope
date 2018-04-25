@@ -2,6 +2,7 @@ package runscope
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
 )
 

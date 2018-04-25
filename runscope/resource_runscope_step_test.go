@@ -2,11 +2,12 @@ package runscope
 
 import (
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/ewilde/go-runscope"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"os"
-	"testing"
 )
 
 func TestAccStep_basic(t *testing.T) {

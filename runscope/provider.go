@@ -1,8 +1,6 @@
 package runscope
 
 import (
-	"os"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -14,13 +12,13 @@ func Provider() terraform.ResourceProvider {
 			"access_token": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: envDefaultFunc("RUNSCOPE_ACCESS_TOKEN"),
+				DefaultFunc: schema.EnvDefaultFunc("RUNSCOPE_ACCESS_TOKEN", nil),
 				Description: "A runscope access token.",
 			},
 			"api_url": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: envDefaultFunc("RUNSCOPE_API_URL"),
+				DefaultFunc: schema.EnvDefaultFunc("RUNSCOPE_API_URL", nil),
 				Description: "A runscope api url i.e. https://api.runscope.com.",
 				Default:     "https://api.runscope.com",
 			},
@@ -41,20 +39,6 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ConfigureFunc: providerConfigure,
-	}
-}
-
-func envDefaultFunc(k string) schema.SchemaDefaultFunc {
-	return func() (interface{}, error) {
-		if v := os.Getenv(k); v != "" {
-			if v == "true" {
-				return true, nil
-			} else if v == "false" {
-				return false, nil
-			}
-			return v, nil
-		}
-		return nil, nil
 	}
 }
 

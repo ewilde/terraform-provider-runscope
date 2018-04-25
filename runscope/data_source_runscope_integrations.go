@@ -1,10 +1,11 @@
 package runscope
 
 import (
-	"github.com/ewilde/go-runscope"
-	"github.com/hashicorp/terraform/helper/schema"
 	"log"
 	"time"
+
+	"github.com/ewilde/go-runscope"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func dataSourceRunscopeIntegrations() *schema.Resource {

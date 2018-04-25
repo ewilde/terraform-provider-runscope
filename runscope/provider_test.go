@@ -4,11 +4,12 @@ import (
 	"os"
 	"testing"
 
+	"log"
+	"strings"
+
 	"github.com/ewilde/go-runscope"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"log"
-	"strings"
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
