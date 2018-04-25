@@ -50,7 +50,7 @@ func testAccPreCheck(t *testing.T) {
 
 func TestMain(m *testing.M) {
 
-	config := Config{
+	config := config{
 		AccessToken: os.Getenv("RUNSCOPE_ACCESS_TOKEN"),
 		APIURL:      "https://api.runscope.com",
 	}

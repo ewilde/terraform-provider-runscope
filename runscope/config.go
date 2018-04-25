@@ -7,12 +7,12 @@ import (
 )
 
 // Config contains runscope provider settings
-type Config struct {
+type config struct {
 	AccessToken string
 	APIURL      string
 }
 
-func (c *Config) client() (*runscope.Client, error) {
+func (c *config) client() (*runscope.Client, error) {
 	client := runscope.NewClient(c.APIURL, c.AccessToken)
 
 	log.Printf("[INFO] runscope client configured for server %s", c.APIURL)
