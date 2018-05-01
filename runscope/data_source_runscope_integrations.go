@@ -28,7 +28,7 @@ func dataSourceRunscopeIntegrations() *schema.Resource {
 							Required: true,
 						},
 						"values": {
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							Required: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 						},
@@ -36,7 +36,7 @@ func dataSourceRunscopeIntegrations() *schema.Resource {
 				},
 			},
 			"ids": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},

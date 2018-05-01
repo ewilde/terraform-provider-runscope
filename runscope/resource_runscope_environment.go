@@ -49,17 +49,17 @@ func resourceRunscopeEnvironment() *schema.Resource {
 				ForceNew: false,
 			},
 			"integrations": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"regions": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"remote_agents": &schema.Schema{
-				Type: schema.TypeList,
+				Type: schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": &schema.Schema{
@@ -245,8 +245,8 @@ func createEnvironmentFromResourceData(d *schema.ResourceData) (*runscope.Enviro
 
 	if attr, ok := d.GetOk("integrations"); ok {
 		integrations := []*runscope.EnvironmentIntegration{}
-		items := attr.([]interface{})
-		for _, item := range items {
+		items := attr.(*schema.Set)
+		for _, item := range items.List() {
 			integration := runscope.EnvironmentIntegration{
 				ID: item.(string),
 			}
@@ -259,8 +259,8 @@ func createEnvironmentFromResourceData(d *schema.ResourceData) (*runscope.Enviro
 
 	if attr, ok := d.GetOk("regions"); ok {
 		regions := []string{}
-		items := attr.([]interface{})
-		for _, x := range items {
+		items := attr.(*schema.Set)
+		for _, x := range items.List() {
 			item := x.(string)
 			regions = append(regions, item)
 		}
@@ -270,8 +270,8 @@ func createEnvironmentFromResourceData(d *schema.ResourceData) (*runscope.Enviro
 
 	if attr, ok := d.GetOk("remote_agents"); ok {
 		remoteAgents := []*runscope.LocalMachine{}
-		items := attr.([]interface{})
-		for _, x := range items {
+		items := attr.(*schema.Set)
+		for _, x := range items.List() {
 			item := x.(map[string]interface{})
 			remoteAgent := runscope.LocalMachine{
 				Name: item["name"].(string),

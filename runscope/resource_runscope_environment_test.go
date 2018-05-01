@@ -5,6 +5,8 @@ import (
 	"os"
 	"testing"
 
+	"strings"
+
 	"github.com/ewilde/go-runscope"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -95,19 +97,19 @@ func testAccCheckEnvironmentExists(n string) resource.TestCheckFunc {
 		}
 
 		if len(foundRecord.Integrations) != 1 {
-			return fmt.Errorf("Expected %d integrations, actual %d", 1, len(environment.Integrations))
+			return fmt.Errorf("Expected %d integrations, actual %d", 1, len(foundRecord.Integrations))
 		}
 
 		if len(foundRecord.Regions) != 2 {
-			return fmt.Errorf("Expected %d regions, actual %d", 2, len(environment.Regions))
+			return fmt.Errorf("Expected %d regions, actual %d", 2, len(foundRecord.Regions))
 		}
 
-		if foundRecord.Regions[0] != "us1" {
-			return fmt.Errorf("Expected %s, actual %s", "us1", environment.Regions[0])
+		if !contains(foundRecord.Regions, "us1") {
+			return fmt.Errorf("Expected %s, actual %s", "us1", strings.Join(foundRecord.Regions, ","))
 		}
 
-		if foundRecord.Regions[1] != "eu1" {
-			return fmt.Errorf("Expected %s, actual %s", "eu1", environment.Regions[1])
+		if !contains(foundRecord.Regions, "eu1") {
+			return fmt.Errorf("Expected %s, actual %s", "eu1", strings.Join(foundRecord.Regions, ","))
 		}
 
 		if !foundRecord.RetryOnFailure {

@@ -37,10 +37,6 @@ func testAccDataSourceRunscopeIntegrations(dataSource string) resource.TestCheck
 			return fmt.Errorf("expected to get 2 integrations ids returned from runscope data resource %v, got %v", dataSource, a["ids.#"])
 		}
 
-		if a["ids.0"] == "" {
-			return fmt.Errorf("expected to get an integration id from runscope data resource %v, got blank", dataSource)
-		}
-
 		return nil
 	}
 }

@@ -42,7 +42,7 @@ func resourceRunscopeStep() *schema.Resource {
 				ForceNew: false,
 			},
 			"variables": &schema.Schema{
-				Type: schema.TypeList,
+				Type: schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": &schema.Schema{
@@ -86,7 +86,7 @@ func resourceRunscopeStep() *schema.Resource {
 				Optional: true,
 			},
 			"headers": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -259,8 +259,8 @@ func createStepFromResourceData(d *schema.ResourceData) (*runscope.TestStep, str
 
 	if attr, ok := d.GetOk("variables"); ok {
 		variables := []*runscope.Variable{}
-		items := attr.([]interface{})
-		for _, x := range items {
+		items := attr.(*schema.Set)
+		for _, x := range items.List() {
 			item := x.(map[string]interface{})
 			variable := runscope.Variable{
 				Name:     item["name"].(string),
@@ -306,8 +306,8 @@ func createStepFromResourceData(d *schema.ResourceData) (*runscope.TestStep, str
 
 	if attr, ok := d.GetOk("headers"); ok {
 		step.Headers = make(map[string][]string)
-		items := attr.([]interface{})
-		for _, x := range items {
+		items := attr.(*schema.Set)
+		for _, x := range items.List() {
 			item := x.(map[string]interface{})
 			header := item["header"].(string)
 			step.Headers[header] = append(step.Headers[header], item["value"].(string))

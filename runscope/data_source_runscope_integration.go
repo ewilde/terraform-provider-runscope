@@ -28,7 +28,7 @@ func dataSourceRunscopeIntegration() *schema.Resource {
 							Required: true,
 						},
 						"values": {
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							Required: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 						},
@@ -90,7 +90,7 @@ func integrationFiltersTest(integration *runscope.Integration, filters *schema.S
 		m := v.(map[string]interface{})
 		passed := false
 
-		for _, e := range m["values"].([]interface{}) {
+		for _, e := range m["values"].(*schema.Set).List() {
 			switch m["name"].(string) {
 			case "id":
 				if integration.ID == e {
