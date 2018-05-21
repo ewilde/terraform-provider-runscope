@@ -3,9 +3,8 @@ package runscope
 import (
 	"fmt"
 	"os"
-	"testing"
-
 	"strings"
+	"testing"
 
 	"github.com/ewilde/go-runscope"
 	"github.com/hashicorp/terraform/helper/resource"

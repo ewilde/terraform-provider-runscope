@@ -1,11 +1,10 @@
 package runscope
 
 import (
-	"os"
-	"testing"
-
 	"log"
+	"os"
 	"strings"
+	"testing"
 
 	"github.com/ewilde/go-runscope"
 	"github.com/hashicorp/terraform/helper/schema"

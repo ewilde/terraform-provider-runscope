@@ -1,3 +1,6 @@
+// Note this source file ends in an '_'; otherwise the compiler
+// will treat is as a test file.
+
 package runscope
 
 import (

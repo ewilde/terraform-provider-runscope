@@ -2,9 +2,8 @@ package runscope
 
 import (
 	"fmt"
-	"testing"
-
 	"os"
+	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -58,7 +57,7 @@ data "runscope_integration" "by_type" {
 
 func TestAccDataSourceRunscopeIntegration_Filter(t *testing.T) {
 
-	teamIS := os.Getenv("RUNSCOPE_TEAM_ID")
+	teamID := os.Getenv("RUNSCOPE_TEAM_ID")
 	var integrationDesc = os.Getenv("RUNSCOPE_INTEGRATION_DESC")
 	if integrationDesc == "" {
 		t.Fatal("RUNSCOPE_INTEGRATION_DESC must be set for this acceptance tests")
@@ -69,7 +68,7 @@ func TestAccDataSourceRunscopeIntegration_Filter(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(testAccDataSourceRunscopeIntegrationFilterConfig, teamIS, integrationDesc),
+				Config: fmt.Sprintf(testAccDataSourceRunscopeIntegrationFilterConfig, teamID, integrationDesc),
 				Check: resource.ComposeTestCheckFunc(
 					testAccDataSourceRunscopeIntegrationFilter("data.runscope_integration.by_type"),
 				),
