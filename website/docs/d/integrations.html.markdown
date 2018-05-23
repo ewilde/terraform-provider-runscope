@@ -8,7 +8,7 @@ description: |-
 
 # runscope\_integration
 
-Use this data source to list all of your [integration]s(https://www.runscope.com/docs/api/integrations)
+Use this data source to list all of your [integrations](https://www.runscope.com/docs/api/integrations)
 that you can use with other runscope resources.
 
 ## Example Usage
@@ -31,6 +31,10 @@ The following arguments are supported:
 
 Variables (`filter`) supports the following:
 
-## Attributes Reference
 * `name` - The name of the field to filter on, currently either: `id`, `type` or `description`.
 * `values` - The list of values to match against
+
+## Attributes Reference
+The following attributes are exported:
+
+* `id` - The unique identifier of the found integration.
